@@ -24,8 +24,8 @@ tfCluster:
     externalPort: 8080
     type: ClusterIP
   image: 
-    repo: samnco
-    name: tf-models
+    repo: vktk
+    name: flowers-inception:latest
     dockerTagCpu: train-0.11-0.0.8
     dockerTagGpu: train-0.11-gpu-0.0.8
     # dockerTagGpu: train-0.11-0.0.8
@@ -45,76 +45,3 @@ tfCluster:
     limits:
       cpu: 2000m
       memory: 2Gi
-
-evaluating:
-  deploy: true
-  replicaCount: 1
-  image: 
-    repo: samnco
-    name: tf-models
-    dockerTagCpu: train-0.11-0.0.8
-    dockerTagGpu: train-0.11-gpu-0.0.8
-    # dockerTagCpu: train-0.9-1
-    # dockerTagGpu: train-0.9-gpu-1
-  service:
-    name: eval
-    command: '[ "/eval.sh" ]'
-  settings:
-    dataset: imagenet
-    isGpu: true
-    nbGpuPerNode: 1
-  resources:
-    requests:
-      cpu: 1000m
-      memory: 1Gi
-    limits:
-      cpu: 2000m
-      memory: 4Gi
-
-tensorboard:
-  deploy: true
-  replicaCount: 1
-  image: 
-    repo: gcr.io/tensorflow
-    name: tensorflow
-    dockerTag: 1.0.0
-  service:
-    name: tensorboard
-    dns: tensorboard.madeden.net
-    type: ClusterIP
-    externalPort: 6006
-    internalPort: 6006
-    command: '[ "tensorboard", "--logdir", "/var/tensorflow/imagenet-eval" ]'
-  settings:
-  resources:
-    requests:
-      cpu: 2000m
-      memory: 4Gi
-    limits:
-      cpu: 4000m
-      memory: 8Gi
-
-serving:
-  deploy: true
-  replicaCount: 3
-  image: 
-    repo: samnco
-    name: tf-models
-    dockerTag: serving-1.0.2
-  service:
-    name: serving
-    dns: inception.madeden.net
-    type: ClusterIP
-    externalPort: 8500
-    internalPort: 8500
-    command: '[ "/serve.sh" ]'
-  settings:
-    dataset: imagenet
-  resources:
-    requests:
-      cpu: 50m
-      memory: 256Mi
-    limits:
-      cpu: 200m
-      memory: 512Mi
-
